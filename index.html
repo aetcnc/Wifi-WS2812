@@ -1,0 +1,498 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width-device-width , initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+        <title> RGB Strip Controller</title>
+        <link rel="stylesheet" type="text/css" href="/style.css">
+        <link rel="stylesheet" href="/bootstrap.min.css">
+        
+        <script>
+            var Socket;
+            function init() {
+              Socket = new WebSocket('ws://' +window.location.hostname + ':81/');
+              Socket.onmessage = function(event){
+                document.getElementById("rxConsole").value += event.data;
+              }
+            }
+            function sendText(){
+              Socket.send(document.getElementById("0").value);
+              document.getElementById("0").value = "";
+            }
+            function sendBrightness(){
+              Socket.send("#"+document.getElementById("brightness").value);
+            }
+            document.addEventListener("touchstart", function(){}, true); //Get mobile devices to show an :active conditional css rule
+
+            function sendButtonData(no_Leds, clicked_id, clicked_function, val_red, val_green, val_blue, val_state){
+              
+              var full_data = '{"num_LEDs":'+no_Leds+',"ID":'+clicked_id+',"Function":'+clicked_function+',"Red":'+val_red+',"Green":'+val_green+',"Blue":'+val_blue+'"State":'+val_state+'}';
+              Socket.send(full_data);
+
+            }
+
+
+            /*document.oncontextmenu = function(event) {
+              event.preventDefault();
+              event.stopPropagation();
+              return false;
+              };*/
+        </script>
+
+    </head>
+
+    
+    <body onload="javascript:init()"> 
+        
+        <Main>
+          <div class="wrapper">
+               <div class="container" style="padding-top: 15px;">
+                  <div class="row g-2">
+                    <div class="col-sm-12 cus-border">
+                      <div class="p-3 border bg-light" style="border-radius: 10px;">
+                        <div id="main-header">
+                          WS2812 RGB LED STRIP CONTROLLER
+                        </div>
+                      </div>
+                    </div>
+                    <!--<div class="col-sm-12" id="noLEDentry" >
+                      <div class="p-3 border bg-light" style="border-radius: 10px;">
+                        <div class="row">
+                          
+                                <div class="form-group">
+                                  <h2 class="centeringFunction">LED Quantity</h2>
+                                  <div class="centeringFunction">
+                                    <input type="text" class="form-control" style="max-width: 185px;" placeholder="Enter number of LEDs" id="0" onkeydown="if(event.keyCode ==13) sendButtonData((this.value),(this.id),0,255,255,255,0);"/>
+                                  </div>
+                                  
+                                  <div>
+                                      <small id="emailHelp" class="form-text text-muted">LED strips come in densities of 30, 60 or 144 lights per meter. Multiply this number of lights per metre for your strip by the number of meters you are powering from the controller. e.g.: 3metres x 60 lights per metre = <bold>180 lights.</bold> Input this number above. Only five (5) lights will be powered up by default, unitl you input this number.</small>
+                                  </div>  
+                                </div>
+                                                   
+                        </div>
+
+                      </div>
+                    </div>-->
+                    <div class="col-sm-6" id="functionControl">
+                      <div class="p-3 border bg-light" style="border-radius: 10px;">
+                        <div class="row">
+                          <div class="col-sm-12 centeringFunction">
+                                <h5 class="text-left" style="padding: 10px;">Function Control</h5>
+                          </div>
+                          <div class="col-sm-12 centeringFunction" >
+                                <ul class="list-inline" style="margin-bottom: 5px;">
+                                    <button type="button" class="btn btn-outline-dark" id="100" onclick ="sendButtonData(0,(this.id),100,0,0,0,0)">On</button>
+                                    <button type="button" class="btn btn-outline-dark" id="101" onclick ="sendButtonData(0,(this.id),101,0,0,0,0)">Off</button>
+                                    
+                                </ul>
+                          </div>
+                          <div class="col-sm-12 centeringFunction" >
+                            <h5 class="text-left" style="padding: 10px;">Brightness</h5>
+                          </div>
+                          <div class="col-sm-12 centeringFunction" >
+                            
+                               <input type="range" min="0" max="100" value="50" class="form-range" style="max-width: 15rem;"  id="brightness" oninput="sendBrightness()"/>
+                            
+                          </div>
+                        
+                        <div class="col-sm-12 centeringFunction">
+                            <h5 class="text-left" style="padding: 10px;">Primary Colours</h5>
+                        </div>
+                        <div class="col-sm-12 centeringFunction">
+                              <ul class="list-inline" style="margin-bottom: 5px;">
+                                  <li class="list-inline-item"><div class="circle" ><a id="3" onclick ="sendButtonData(0,(this.id),0,180,180,180,0)" href="javascript:void(0);" style="background: white; border: 1px solid gray;"></a></div>
+                                  </li>
+                                  <li class="list-inline-item"><div class="circle" ><a id="4" onclick="sendButtonData(0,(this.id),0,255,0,0,0)" href="javascript:void(0);" style="background: red;"></a></div>
+                                  </li>
+                                  <li class="list-inline-item"><div class="circle" ><a id="5" onclick="sendButtonData(0,(this.id),0,0,0,255,0)" href="javascript:void(0);" style="background: blue;"></a></div>
+                                  </li>
+                                  <li class="list-inline-item"><div class="circle" ><a id="6" onclick="sendButtonData(0,(this.id),0,0,255,0,0)" href="javascript:void(0);" style="background: green;"></a></div>
+                                  </li>
+                              </ul>
+                        </div>
+                        <div class="col-sm-12 centeringFunction">
+                            <h5 class="text-left" style="padding: 10px;">Secondary Colours</h5>
+                          </div>
+                          <div class="col-sm-12 centeringFunction">
+                              <ul class="list-inline" style="margin-bottom: 5px;">
+                                  <li class="list-inline-item"><div class="circle" ><a id="7" onclick ="sendButtonData(0,(this.id),0,255,255,0,0)" href="javascript:void(0);" style="background: yellow; border: 1px solid gray;"></a></div>
+                                  </li>
+                                  <li class="list-inline-item"><div class="circle" ><a id="8" onclick ="sendButtonData(0,(this.id),0,255,0,255,0)" href="javascript:void(0);" style="background: magenta;"></a></div>
+                                  </li>
+                                  <li class="list-inline-item"><div class="circle" ><a id="9" onclick ="sendButtonData(0,(this.id),0,0,255,255,0)" href="javascript:void(0);" style="background: cyan;"></a></div>
+                                  
+                              </ul>
+                        </div>
+                        <div class="col-sm-12 centeringFunction">
+                          <h5 class="text-left" style="padding: 10px;">Tertiary Colours</h5>
+                        </div>
+                        <div class="col-sm-12 centeringFunction">
+                            <ul class="list-inline" style="margin-bottom: 5px; padding-bottom: 10px;">
+                                <li class="list-inline-item"><div class="circle" ><a id="11" onclick ="sendButtonData(0,(this.id),0,255,128,0,0)" href="javascript:void(0);" style="background: Orange;"></a></div>
+                                </li>
+                                <li class="list-inline-item"><div class="circle" ><a id="12" onclick ="sendButtonData(0,(this.id),0,255,0,128,0)" href="javascript:void(0);" style="background: rgba(255,0,128,1);"></a></div>
+                                </li>
+                                <li class="list-inline-item"><div class="circle" ><a id="13" onclick ="sendButtonData(0,(this.id),0,128,0,255,0)" href="javascript:void(0);" style="background: rgba(128,0,255,1);"></a></div>
+                                
+                            </ul>
+                        </div>
+                        <div class="col-sm-12 centeringFunction">
+                          <ul class="list-inline" style="margin-bottom: 140px;">
+                              <li class="list-inline-item"><div class="circle" ><a id="14" onclick ="sendButtonData(0,(this.id),0,0,128,255,0)" href="javascript:void(0);" style="background: rgba(0,128,255,1);"></a></div>
+                              </li>
+                              <li class="list-inline-item"><div class="circle" ><a id="15" onclick ="sendButtonData(0,(this.id),0,0,255,128,0)" href="javascript:void(0);" style="background: rgba(0,255,128,1);"></a></div>
+                              </li>
+                              <li class="list-inline-item"><div class="circle" ><a id="16" onclick ="sendButtonData(0,(this.id),0,128,255,0,0)" href="javascript:void(0);" style="background: rgba(128,255,0,1);"></a></div>
+                              
+                          </ul>
+                        </div>
+                        
+                      </div>
+                    </div>
+                  </div>
+
+                    <div class="col-sm-6" id="colourSelector">
+                      <div class="p-3 border bg-light" style="border-radius: 10px;">
+                       <div class="row">
+                            <div class="col-sm-12 centeringFunction">
+                                <h5 class="text-left" style="padding: 10px;">Colour Selector</h5>
+                            </div>
+                            <div class="col-sm-12 centeringFunction">
+                                  <ul class="list-inline" style="margin-bottom: 10px;">
+                                    <li class="list-inline-item"><div class="circle"><a id="17" onclick ="sendButtonData(0,(this.id),0,0,64,64,0)" href="javascript:void(0);" style="background: rgba(0,64,64,1);"></a></div>
+                                    </li>
+                                  <li class="list-inline-item"><div class="circle" ><a id="18" onclick ="sendButtonData(0,(this.id),0,0,128,128,0)" href="javascript:void(0);" style="background: rgba(0,128,128,1);"></a></div>
+                                  </li>
+                                  <li class="list-inline-item"><div class="circle" ><a id="19" onclick ="sendButtonData(0,(this.id),0,0,190,190,0)" href="javascript:void(0);" style="background: rgba(0,190,190,1);"></a></div>
+                                  </li>
+                                  <li class="list-inline-item"><div class="circle" ><a id="20" onclick ="sendButtonData(0,(this.id),0,0,255,255,0)" href="javascript:void(0);" style="background: rgba(0,255,255,1);"></a></div>
+                                  </li>
+                                  </ul>
+                            </div>
+                            <div class="col-sm-12 centeringFunction">
+                                  <ul class="list-inline" style="margin-bottom: 10px;">
+                                    <li class="list-inline-item"><div class="circle" ><a id="21" onclick ="sendButtonData(0,(this.id),0,0,32,64,0)" href="javascript:void(0);" style="background: rgba(0,32,64,1);"></a></div>
+                                    </li>
+                                    <li class="list-inline-item"><div class="circle" ><a id="22" onclick ="sendButtonData(0,(this.id),0,0,64,128,0)" href="javascript:void(0);" style="background: rgba(0,64,128,1);"></a></div>
+                                    </li>
+                                    <li class="list-inline-item"><div class="circle" ><a id="23" onclick ="sendButtonData(0,(this.id),0,0,96,190,0)" href="javascript:void(0);" style="background: rgba(0,96,190,1);"></a></div>
+                                    </li>
+                                    <li class="list-inline-item"><div class="circle" ><a id="24" onclick ="sendButtonData(0,(this.id),0,0,128,255,0)" href="javascript:void(0);" style="background: rgba(0,128,255,1);"></a></div>
+                                    </li>
+                                  </ul>
+                            </div>
+                            <div class="col-sm-12 centeringFunction">
+                                  <ul class="list-inline" style="margin-bottom: 10px;">
+                                    <li class="list-inline-item"><div class="circle" ><a id="25" onclick ="sendButtonData(0,(this.id),0,0,0,64,0)" href="javascript:void(0);" style="background: rgba(0,0,64,1);"></a></div>
+                                    </li>
+                                    <li class="list-inline-item"><div class="circle" ><a id="26" onclick ="sendButtonData(0,(this.id),0,0,0,128,0)" href="javascript:void(0);" style="background: rgba(0,0,128,1);"></a></div>
+                                    </li>
+                                    <li class="list-inline-item"><div class="circle" ><a id="27" onclick ="sendButtonData(0,(this.id),0,0,0,190,0)" href="javascript:void(0);" style="background: rgba(0,0,190,1);"></a></div>
+                                    </li>
+                                    <li class="list-inline-item"><div class="circle" ><a id="28" onclick ="sendButtonData(0,(this.id),0,0,0,255,0)" href="javascript:void(0);" style="background: rgba(0,0,255,1);"></a></div>
+                                    </li>
+                                  </ul>
+                            </div>
+                            <div class="col-sm-12 centeringFunction">
+                                  <ul class="list-inline" style="margin-bottom: 10px;">
+                                    <li class="list-inline-item"><div class="circle" ><a id="29" onclick ="sendButtonData(0,(this.id),0,32,0,64,0)" href="javascript:void(0);" style="background: rgba(32,0,64,1);"></a></div>
+                                    </li>
+                                    <li class="list-inline-item"><div class="circle" ><a id="30" onclick ="sendButtonData(0,(this.id),0,64,0,128,0)" href="javascript:void(0);" style="background: rgba(64,0,128,1);"></a></div>
+                                    </li>
+                                    <li class="list-inline-item"><div class="circle" ><a id="31" onclick ="sendButtonData(0,(this.id),0,96,0,190,0)" href="javascript:void(0);" style="background: rgba(96,0,190,1);"></a></div>
+                                    </li>
+                                    <li class="list-inline-item"><div class="circle" ><a id="32" onclick ="sendButtonData(0,(this.id),0,128,0,255,0)" href="javascript:void(0);" style="background: rgba(128,0,255,1);"></a></div>
+                                    </li>
+                                  </ul>
+                            </div>
+                            <div class="col-sm-12 centeringFunction">
+                                  <ul class="list-inline" style="margin-bottom: 10px;">
+                                    <li class="list-inline-item"><div class="circle" ><a id="33" onclick ="sendButtonData(0,(this.id),0,64,0,64,0)" href="javascript:void(0);" style="background: rgba(64,0,64,1);"></a></div>
+                                    </li>
+                                    <li class="list-inline-item"><div class="circle" ><a id="34" onclick ="sendButtonData(0,(this.id),0,128,0,128,0)" href="javascript:void(0);" style="background: rgba(128,0,128,1);"></a></div>
+                                    </li>
+                                    <li class="list-inline-item"><div class="circle" ><a id="35" onclick ="sendButtonData(0,(this.id),0,190,0,190,0)" href="javascript:void(0);" style="background: rgba(190,0,190,1);"></a></div>
+                                    </li>
+                                    <li class="list-inline-item"><div class="circle" ><a id="36" onclick ="sendButtonData(0,(this.id),0,255,0,255,0)" href="javascript:void(0);" style="background: rgba(255,0,255,1);"></a></div>
+                                    </li>
+                                  </ul>
+                            </div>
+                            <div class="col-sm-12 centeringFunction">
+                                  <ul class="list-inline" style="margin-bottom: 10px;">
+                                    <li class="list-inline-item"><div class="circle" ><a id="37" onclick ="sendButtonData(0,(this.id),0,64,0,32,0)" href="javascript:void(0);" style="background: rgba(64,0,32,1);"></a></div>
+                                    </li>
+                                    <li class="list-inline-item"><div class="circle" ><a id="38" onclick ="sendButtonData(0,(this.id),0,128,0,64,0)" href="javascript:void(0);" style="background: rgba(128,0,64,1);"></a></div>
+                                    </li>
+                                    <li class="list-inline-item"><div class="circle" ><a id="39" onclick ="sendButtonData(0,(this.id),0,190,0,96,0)" href="javascript:void(0);" style="background: rgba(190,0,96,1);"></a></div>
+                                    </li>
+                                    <li class="list-inline-item"><div class="circle" ><a id="40" onclick ="sendButtonData(0,(this.id),0,255,0,128,0)" href="javascript:void(0);" style="background: rgba(255,0,128,1);"></a></div>
+                                    </li>
+                                  </ul>
+                            </div>
+                            <div class="col-sm-12 centeringFunction">
+                                  <ul class="list-inline" style="margin-bottom: 10px;">
+                                    <li class="list-inline-item"><div class="circle" ><a id="41" onclick ="sendButtonData(0,(this.id),0,64,0,0,0)" href="javascript:void(0);" style="background: rgba(64,0,0,1);"></a></div>
+                                    </li>
+                                    <li class="list-inline-item"><div class="circle" ><a id="42" onclick ="sendButtonData(0,(this.id),0,128,0,0,0)" href="javascript:void(0);" style="background: rgba(128,0,0,1);"></a></div>
+                                    </li>
+                                    <li class="list-inline-item"><div class="circle" ><a id="43" onclick ="sendButtonData(0,(this.id),0,190,0,0,0)" href="javascript:void(0);" style="background: rgba(190,0,0,1);"></a></div>
+                                    </li>
+                                    <li class="list-inline-item"><div class="circle" ><a id="44" onclick ="sendButtonData(0,(this.id),0,255,0,0,0)" href="javascript:void(0);" style="background: rgba(255,0,0,1);"></a></div>
+                                    </li>
+                                  </ul>
+                            </div>
+                            <div class="col-sm-12 centeringFunction">
+                                  <ul class="list-inline" style="margin-bottom: 10px;">
+                                    <li class="list-inline-item"><div class="circle" ><a id="45" onclick ="sendButtonData(0,(this.id),0,64,32,0,0)" href="javascript:void(0);" style="background: rgba(64,32,0,1);"></a></div>
+                                    </li>
+                                    <li class="list-inline-item"><div class="circle" ><a id="46" onclick ="sendButtonData(0,(this.id),0,128,64,0,0)" href="javascript:void(0);" style="background: rgba(128,64,0,1);"></a></div>
+                                    </li>
+                                    <li class="list-inline-item"><div class="circle" ><a id="47" onclick ="sendButtonData(0,(this.id),0,190,96,0,0)" href="javascript:void(0);" style="background: rgba(190,96,0,1);"></a></div>
+                                    </li>
+                                    <li class="list-inline-item"><div class="circle" ><a id="48" onclick ="sendButtonData(0,(this.id),0,255,128,0,0)" href="javascript:void(0);" style="background: rgba(255,128,0,1);"></a></div>
+                                    </li>
+                                  </ul>
+                            </div>
+                            <div class="col-sm-12 centeringFunction">
+                                  <ul class="list-inline" style="margin-bottom: 10px;">
+                                    <li class="list-inline-item"><div class="circle" ><a id="49" onclick ="sendButtonData(0,(this.id),0,64,64,0,0)" href="javascript:void(0);" style="background: rgba(64,64,0,1);"></a></div>
+                                    </li>
+                                    <li class="list-inline-item"><div class="circle" ><a id="50" onclick ="sendButtonData(0,(this.id),0,128,128,0,0)" href="javascript:void(0);" style="background: rgba(128,128,0,1);"></a></div>
+                                    </li>
+                                    <li class="list-inline-item"><div class="circle" ><a id="51" onclick ="sendButtonData(0,(this.id),0,190,190,0,0)" href="javascript:void(0);" style="background: rgba(190,190,0,1);"></a></div>
+                                    </li>
+                                    <li class="list-inline-item"><div class="circle" ><a id="52" onclick ="sendButtonData(0,(this.id),0,255,255,0,0)" href="javascript:void(0);" style="background: rgba(255,255,0,1);"></a></div>
+                                    </li>
+                                  </ul>
+                            </div>
+                            <div class="col-sm-12 centeringFunction">
+                                  <ul class="list-inline" style="margin-bottom: 10px;">
+                                    <li class="list-inline-item"><div class="circle" ><a id="53" onclick ="sendButtonData(0,(this.id),0,32,64,0,0)" href="javascript:void(0);" style="background: rgba(32,64,0,1);"></a></div>
+                                    </li>
+                                    <li class="list-inline-item"><div class="circle" ><a id="54" onclick ="sendButtonData(0,(this.id),0,64,128,0,0)" href="javascript:void(0);" style="background: rgba(64,128,0,1);"></a></div>
+                                    </li>
+                                    <li class="list-inline-item"><div class="circle" ><a id="55" onclick ="sendButtonData(0,(this.id),0,96,190,0,0)" href="javascript:void(0);" style="background: rgba(96,190,0,1);"></a></div>
+                                    </li>
+                                    <li class="list-inline-item"><div class="circle" ><a id="56" onclick ="sendButtonData(0,(this.id),0,128,255,0,0)" href="javascript:void(0);" style="background: rgba(128,255,0,1);"></a></div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-sm-12 centeringFunction">
+                              <ul class="list-inline" style="margin-bottom: 10px;">
+                                <li class="list-inline-item"><div class="circle" ><a id="57" onclick ="sendButtonData(0,(this.id),0,0,64,0,0)" href="javascript:void(0);" style="background: rgba(0,64,0,1);"></a></div>
+                                </li>
+                                <li class="list-inline-item"><div class="circle" ><a id="58" onclick ="sendButtonData(0,(this.id),0,0,128,0,0)" href="javascript:void(0);" style="background: rgba(0,128,0,1);"></a></div>
+                                </li>
+                                <li class="list-inline-item"><div class="circle" ><a id="59" onclick ="sendButtonData(0,(this.id),0,0,190,0,0)" href="javascript:void(0);" style="background: rgba(0,190,0,1);"></a></div>
+                                </li>
+                                <li class="list-inline-item"><div class="circle" ><a id="60" onclick ="sendButtonData(0,(this.id),0,0,255,0,0)" href="javascript:void(0);" style="background: rgba(0,255,0,1);"></a></div>
+                                </li>
+                              </ul>
+                            </div>
+                            <div class="col-sm-12 centeringFunction">
+                              <ul class="list-inline" style="margin-bottom: 10px; ">
+                                <li class="list-inline-item"><div class="circle" ><a id="61" onclick ="sendButtonData(0,(this.id),0,0,64,32,0)" href="javascript:void(0);" style="background: rgba(0,64,32,1);"></a></div>
+                                </li>
+                                <li class="list-inline-item"><div class="circle" ><a id="62" onclick ="sendButtonData(0,(this.id),0,0,128,64,0)" href="javascript:void(0);" style="background: rgba(0,128,64,1);"></a></div>
+                                </li>
+                                <li class="list-inline-item"><div class="circle" ><a id="63" onclick ="sendButtonData(0,(this.id),0,0,190,96,0)" href="javascript:void(0);" style="background: rgba(0,190,96,1);"></a></div>
+                                </li>
+                                <li class="list-inline-item"><div class="circle" ><a id="64" onclick ="sendButtonData(0,(this.id),0,0,255,128,0)" href="javascript:void(0);" style="background: rgba(0,255,128,1);"></a></div>
+                                </li>
+                              </ul>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+
+
+
+
+
+
+
+
+
+
+
+                    <div class="col-sm-12 cus-border">
+                      <div class="p-3 border bg-light" style="border-radius: 10px;">
+                        <div class="row">
+                          <div class="col-sm-12 centeringFunction">
+                              <h5 class="text-left" style="padding: 10px;">Preset Effects</h5>
+                          </div>
+                          
+                          
+                          <div class="col-sm-12 centeringFunction">
+                            <ul class="list-inline" style="margin-bottom: 0px;">
+                              <li>
+                                 <button type="button" class="btn btn-outline-dark" id="102" onclick ="sendButtonData(0,(this.id),102,0,0,0,0)" style="margin-bottom: 5px;">Flash</button>
+                                 <button type="button" class="btn btn-outline-dark" id="103" onclick ="sendButtonData(0,(this.id),103,0,0,0,0)" style="margin-bottom: 5px;">Stars</button>
+                                 <button type="button" class="btn btn-outline-dark" id="104" onclick ="sendButtonData(0,(this.id),104,0,0,0,0)" style="margin-bottom: 5px;">Comet</button>
+                                 <button type="button" class="btn btn-outline-dark" id="105" onclick ="sendButtonData(0,(this.id),105,0,0,0,0)" style="margin-bottom: 5px;">Rainbow 1</button>
+                                </li>
+                           </ul>     
+                          </div>
+                          <div class="col-sm-12 centeringFunction">
+                            <ul class="list-inline" style="margin-bottom: 0px;">
+                              <li>
+                                
+                                <button type="button" class="btn btn-outline-dark" id="106" onclick ="sendButtonData(0,(this.id),106,0,0,0,0)" style="margin-bottom: 5px;">Rainbow 2</button>
+                                <button type="button" class="btn btn-outline-dark" id="107" onclick ="sendButtonData(0,(this.id),107,0,0,0,0)" style="margin-bottom: 5px;">Ripple</button>
+                                <button type="button" class="btn btn-outline-dark" id="108" onclick ="sendButtonData(0,(this.id),108,0,0,0,0)" style="margin-bottom: 5px;">Comet 2</button>
+                                <button type="button" class="btn btn-outline-dark" id="109" onclick ="sendButtonData(0,(this.id),108,0,0,0,0)" style="margin-bottom: 5px;">Rain</button>
+                              </li>
+                            </ul>    
+                          </div>
+                          <div class="col-sm-12 centeringFunction">
+                            <ul class="list-inline" style="margin-bottom: 0px;">
+                              <li>
+                                <button type="button" class="btn btn-outline-dark" id="110" onclick ="sendButtonData(0,(this.id),107,0,0,0,0)" style="margin-bottom: 5px;">Zig-Zag</button>
+                                <button type="button" class="btn btn-outline-dark" id="111" onclick ="sendButtonData(0,(this.id),108,0,0,0,0)" style="margin-bottom: 5px;">Flash RGB</button>
+                                <button type="button" class="btn btn-outline-dark" id="112" onclick ="sendButtonData(0,(this.id),107,0,0,0,0)" style="margin-bottom: 5px;">Bounce</button>
+                                <button type="button" class="btn btn-outline-dark" id="113" onclick ="sendButtonData(0,(this.id),108,0,0,0,0)" style="margin-bottom: 5px;">Breathe</button>
+                              </li>
+                            </ul>    
+                          </div>
+                          <div class="col-sm-12 centeringFunction">
+                            <ul class="list-inline" style="margin-bottom: 0px;">
+                              <li>
+                                <button type="button" class="btn btn-outline-dark" id="114" onclick ="sendButtonData(0,(this.id),107,0,0,0,0)" style="margin-bottom: 5px;">Vive La France</button>
+                                <button type="button" class="btn btn-outline-dark" id="115" onclick ="sendButtonData(0,(this.id),108,0,0,0,0)" style="margin-bottom: 5px;">Clouds</button>
+                                <button type="button" class="btn btn-outline-dark" id="116" onclick ="sendButtonData(0,(this.id),107,0,0,0,0)" style="margin-bottom: 5px;">Twinkle</button>
+                                <button type="button" class="btn btn-outline-dark" id="117" onclick ="sendButtonData(0,(this.id),108,0,0,0,0)" style="margin-bottom: 5px;">Lava</button>
+                              </li>
+                            </ul>  
+                          </div>
+                          <div class="col-sm-12 centeringFunction">
+                            <ul class="list-inline" style="margin-bottom: 0px;">
+                              <li>
+                                <button type="button" class="btn btn-outline-dark" id="118" onclick ="sendButtonData(0,(this.id),107,0,0,0,0)" style="margin-bottom: 5px;">Applause</button>
+                                <button type="button" class="btn btn-outline-dark" id="119" onclick ="sendButtonData(0,(this.id),108,0,0,0,0)" style="margin-bottom: 5px;">Confetti</button>
+                                <button type="button" class="btn btn-outline-dark" id="120" onclick ="sendButtonData(0,(this.id),107,0,0,0,0)" style="margin-bottom: 5px;">Cray Cray</button>
+                                <button type="button" class="btn btn-outline-dark" id="121" onclick ="sendButtonData(0,(this.id),108,0,0,0,0)" style="margin-bottom: 5px;">Fire</button>
+                              </li>
+                            </ul>   
+                          </div>
+                          <div class="col-sm-12 centeringFunction">
+                                
+                          </div>
+                          <div class="col-sm-12 centeringFunction">
+                                
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+
+
+
+
+                    <div class="col-sm-12 cus-border">
+                      <div class="p-3 border bg-light" style="border-radius: 10px;">
+                        <div class="row">
+                          <div class="col-sm-12 centeringFunction">
+                              <h5 class="text-left" style="padding: 10px;">Gradient Selector</h5>
+                          </div>
+                          
+                          
+                          <div class="col-sm-12 centeringFunction">
+                                  <ul class="list-inline" style="margin-bottom: 0px;">
+                                    <li class="list-inline-item" style="padding-bottom: 5px;"><div class="blended_grad_1a"><a id="2001" onclick ="sendButtonData(0,(this.id),0,0,0,0,0)" href="javascript:void(0);" class="gradientButton"></a></div>
+                                    </li>
+                                    <li class="list-inline-item" style="padding-bottom: 5px;"><div class="blended_grad_1b"><a id="2002" onclick ="sendButtonData(0,(this.id),0,0,0,0,0)" href="javascript:void(0);" class="gradientButton"></a></div>
+                                    </li>
+                                    <li class="list-inline-item" style="padding-bottom: 5px;"><div class="blended_grad_1c"><a id="2003" onclick ="sendButtonData(0,(this.id),0,0,0,0,0)" href="javascript:void(0);" class="gradientButton"></a></div>
+                                    </li>                                                              
+                                  </ul>
+                          </div>
+                          <div class="col-sm-12 centeringFunction">
+                                <ul class="list-inline" style="margin-bottom: 0px;">
+                                  <li class="list-inline-item" style="padding-bottom: 5px;"><div class="blended_grad_2a"><a id="2004" onclick ="sendButtonData(0,(this.id),0,0,0,0,0)" href="javascript:void(0);" class="gradientButton"></a></div>
+                                  </li>
+                                  <li class="list-inline-item" style="padding-bottom: 5px;"><div class="blended_grad_2b"><a id="2005" onclick ="sendButtonData(0,(this.id),0,0,0,0,0)" href="javascript:void(0);" class="gradientButton"></a></div>
+                                  </li>
+                                  <li class="list-inline-item" style="padding-bottom: 5px;"><div class="blended_grad_2c"><a id="2006" onclick ="sendButtonData(0,(this.id),0,0,0,0,0)" href="javascript:void(0);" class="gradientButton"></a></div>
+                                  </li>
+                                  
+                                </ul>
+                          </div>
+                          <div class="col-sm-12 centeringFunction">
+                                <ul class="list-inline" style="margin-bottom: 0px;">
+                                  <li class="list-inline-item" style="padding-bottom: 5px;"><div class="blended_grad_3a"><a id="2007" onclick ="sendButtonData(0,(this.id),0,0,0,0,0)" href="javascript:void(0);" class="gradientButton"></a></div>
+                                  </li>
+                                  <li class="list-inline-item" style="padding-bottom: 5px;"><div class="blended_grad_3b"><a id="2008" onclick ="sendButtonData(0,(this.id),0,0,0,0,0)" href="javascript:void(0);" class="gradientButton"></a></div>
+                                  </li>
+                                  <li class="list-inline-item" style="padding-bottom: 5px;"><div class="blended_grad_3c"><a id="2009" onclick ="sendButtonData(0,(this.id),0,0,0,0,0)" href="javascript:void(0);" class="gradientButton"></a></div>
+                                  </li>
+                                  
+                                </ul>
+                          </div>
+                          <div class="col-sm-12 centeringFunction">
+                                <ul class="list-inline" style="margin-bottom: 0px;">
+                                  <li class="list-inline-item" style="padding-bottom: 5px;"><div class="blended_grad_4a"><a id="2010" onclick ="sendButtonData(0,(this.id),0,0,0,0,0)" href="javascript:void(0);" class="gradientButton"></a></div>
+                                  </li>
+                                  <li class="list-inline-item" style="padding-bottom: 5px;"><div class="blended_grad_4b"><a id="2011" onclick ="sendButtonData(0,(this.id),0,0,0,0,0)" href="javascript:void(0);" class="gradientButton"></a></div>
+                                  </li>
+                                  <li class="list-inline-item" style="padding-bottom: 5px;"><div class="blended_grad_4c"><a id="2012" onclick ="sendButtonData(0,(this.id),0,0,0,0,0)" href="javascript:void(0);" class="gradientButton"></a></div>
+                                  </li>
+                                  
+                                </ul>
+                          </div>
+                          <div class="col-sm-12 centeringFunction">
+                                <ul class="list-inline" style="margin-bottom: 0px;">
+                                  <li class="list-inline-item" style="padding-bottom: 5px;"><div class="blended_grad_5a"><a id="2013" onclick ="sendButtonData(0,(this.id),0,0,0,0,0)" href="javascript:void(0);" class="gradientButton"></a></div>
+                                  </li>
+                                  <li class="list-inline-item" style="padding-bottom: 5px;"><div class="blended_grad_5b"><a id="2014" onclick ="sendButtonData(0,(this.id),0,0,0,0,0)" href="javascript:void(0);" class="gradientButton"></a></div>
+                                  </li>
+                                  <li class="list-inline-item" style="padding-bottom: 5px;"><div class="blended_grad_5c"><a id="2015" onclick ="sendButtonData(0,(this.id),0,0,0,0,0)" href="javascript:void(0);" class="gradientButton"></a></div>
+                                  </li>
+                                  
+                                </ul>
+                          </div>
+                          <div class="col-sm-12 centeringFunction">
+                                <ul class="list-inline" style="margin-bottom: 0px;">
+                                  <li class="list-inline-item" style="padding-bottom: 5px;"><div class="blended_grad_6a"><a id="2016" onclick ="sendButtonData(0,(this.id),0,0,0,0,0)" href="javascript:void(0);" class="gradientButton"></a></div>
+                                  </li>
+                                  <li class="list-inline-item" style="padding-bottom: 5px;"><div class="blended_grad_6b"><a id="2017" onclick ="sendButtonData(0,(this.id),0,0,0,0,0)" href="javascript:void(0);" class="gradientButton"></a></div>
+                                  </li>
+                                  <li class="list-inline-item" style="padding-bottom: 5px;"><div class="blended_grad_6c"><a id="2018" onclick ="sendButtonData(0,(this.id),0,0,0,0,0)" href="javascript:void(0);" class="gradientButton"></a></div>
+                                  </li>
+                                  
+                                </ul>
+                          </div>
+                          <div class="col-sm-12 centeringFunction">
+                                <ul class="list-inline" style="margin-bottom: 0px; padding-bottom: 10px;">
+                                  <li class="list-inline-item" style="padding-bottom: 5px;"><div class="blended_grad_7a"><a id="2019" onclick ="sendButtonData(0,(this.id),0,0,0,0,0)" href="javascript:void(0);" class="gradientButton"></a></div>
+                                  </li>
+                                  <li class="list-inline-item" style="padding-bottom: 5px;"><div class="blended_grad_7b"><a id="2020" onclick ="sendButtonData(0,(this.id),0,0,0,0,0)" href="javascript:void(0);" class="gradientButton"></a></div>
+                                  </li>
+                                  <li class="list-inline-item" style="padding-bottom: 5px;"><div class="blended_grad_7c"><a id="2021" onclick ="sendButtonData(0,(this.id),0,0,0,0,0)" href="javascript:void(0);" class="gradientButton"></a></div>
+                                  </li>
+                                  
+                                </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+
+
+
+
+
+
+                    <div class="row" style="height: 30px;">
+                    </div>
+                    
+                  </div>
+                </div>
+          </div>
+                
+        </Main>
+
+        
+        <script src="bootstrap.min.js"></script>
+    </body>
+    
+</html>
